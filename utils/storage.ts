@@ -14,7 +14,6 @@ export const storeDataObject = async (
 ) => {
   try {
     const jsonValue = JSON.stringify(value);
-    console.log(`saveing data: ${jsonValue}`);
     await storeData(key, jsonValue);
   } catch (e) {
     console.error(e);
@@ -37,7 +36,6 @@ export const getDataObject = async (
 ): Promise<Record<any, any> | Array<any> | null> => {
   try {
     const jsonValue = await getData(key);
-    console.log(jsonValue);
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   } catch (e) {
     console.error(e);

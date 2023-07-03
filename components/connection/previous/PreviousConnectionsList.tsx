@@ -1,26 +1,24 @@
 import {useContext, useState} from 'react';
 import {Button, List} from 'react-native-paper';
-import PreviousConnection from './Previous-connection';
-import {SetValueContext} from './context';
-import {IPreviousConnection} from './Connection';
-import {View} from 'react-native';
+import PreviousConnection from './PreviousConnection';
+import {SetFormValueContext} from '../context';
+import {StyleSheet, View} from 'react-native';
+import {IConnectionOption} from '../../../types/connection-option.interface';
 
 interface IProps {
-  previousConnections: IPreviousConnection[];
+  previousConnections: IConnectionOption[];
 }
 const PreviousConnectionsList = ({previousConnections}: IProps) => {
-  const {setPreviousConnections} = useContext(SetValueContext);
+  const {setPreviousConnections} = useContext(SetFormValueContext);
   const [expanded, setExpanded] = useState(true);
 
-  const handlePress = () => setExpanded(!expanded);
-
   return (
-    <View style={{marginTop: 26}}>
+    <View style={styles.previousConnectionContainer}>
       <List.Accordion
-        style={{backgroundColor: '#f2f2f2'}}
+        style={styles.previousConnectionList}
         title="Previous Connections"
         expanded={expanded}
-        onPress={handlePress}>
+        onPress={() => setExpanded(!expanded)}>
         {previousConnections.map((previousConnection, index) => (
           <PreviousConnection
             key={index}
@@ -36,5 +34,14 @@ const PreviousConnectionsList = ({previousConnections}: IProps) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  previousConnectionContainer: {
+    marginTop: 26,
+  },
+  previousConnectionList: {
+    backgroundColor: '#f2f2f2',
+  },
+});
 
 export default PreviousConnectionsList;
