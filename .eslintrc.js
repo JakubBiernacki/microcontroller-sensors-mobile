@@ -6,5 +6,8 @@ module.exports = {
     'react/jsx-uses-react': 'off',
     'react/no-unstable-nested-components': 'off',
     'react-native/no-inline-styles': 'off',
-  },
-};
+    'comma-dangle': 'off',
+    'no-extra-semi': 'off',
+    semi: 0
+  }
+}
