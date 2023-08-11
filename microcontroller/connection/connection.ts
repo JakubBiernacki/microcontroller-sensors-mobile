@@ -1,20 +1,18 @@
 import EventEmitter from 'react-native/Libraries/vendor/emitter/EventEmitter';
 import TcpSocket from 'react-native-tcp-socket';
-import {IConnectionOption} from '../../types/connection-option.interface';
+import {IConnectionParams} from '../../types/connection-params.interface';
 
 const TIMEOUT = 5000;
 
-export class ServerConnection extends EventEmitter {
+export class Connection extends EventEmitter {
   _socket?: TcpSocket.Socket;
 
   isReady: boolean;
-  public readonly address: string;
-  public readonly port: number;
-  constructor(connectionOption: IConnectionOption) {
+  public readonly connectionParams: IConnectionParams;
+  constructor(connectionParams: IConnectionParams) {
     super();
     this.isReady = false;
-    this.address = connectionOption.address;
-    this.port = connectionOption.port;
+    this.connectionParams = connectionParams;
 
     this._connect();
 
@@ -37,8 +35,8 @@ export class ServerConnection extends EventEmitter {
 
     socket.connect(
       {
-        host: this.address,
-        port: this.port,
+        host: this.connectionParams.address,
+        port: this.connectionParams.port,
       },
       () => {
         clearTimeout(timeout);
@@ -58,8 +56,13 @@ export class ServerConnection extends EventEmitter {
     });
 
     socket.on('close', () => {
-      console.log('Connection closed!');
+      console.log('Connect closed!');
       this.emit('disconnected');
     });
+  }
+
+  destroy() {
+    this._socket?.destroy();
+    this._socket = undefined;
   }
 }

@@ -1,14 +1,13 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Connection from './components/connection/Connection';
-import Monitor from './components/monitor/Monitor';
-import {MicrocontrollerConnection} from './microcontroller/connection/microcontroller-connection';
+import Connect from './components/connect/Connect';
 import {GlobalStateProvider} from './GlobalState';
+import Dashboard from './components/dashboard/Dashboard';
 
 export type RootStackParamList = {
-  Connection: undefined;
-  Monitor: {connection: MicrocontrollerConnection};
+  Connect: undefined;
+  Dashboard: undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -17,8 +16,8 @@ function App() {
     <GlobalStateProvider>
       <NavigationContainer>
         <RootStack.Navigator>
-          <RootStack.Screen name="Connection" component={Connection} />
-          <RootStack.Screen name="Monitor" component={Monitor} />
+          <RootStack.Screen name="Connect" component={Connect} />
+          <RootStack.Screen name="Dashboard" component={Dashboard} />
         </RootStack.Navigator>
       </NavigationContainer>
     </GlobalStateProvider>

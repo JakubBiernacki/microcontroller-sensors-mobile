@@ -1,12 +1,12 @@
 import {useContext, useState} from 'react';
 import {Button, List} from 'react-native-paper';
 import PreviousConnection from './PreviousConnection';
-import {SetFormValueContext} from '../context';
+import {SetFormValueContext} from '../Connect';
 import {StyleSheet, View} from 'react-native';
-import {IConnectionOption} from '../../../types/connection-option.interface';
+import {IConnectionParams} from '../../../types/connection-params.interface';
 
 interface IProps {
-  previousConnections: IConnectionOption[];
+  previousConnections: IConnectionParams[];
 }
 const PreviousConnectionsList = ({previousConnections}: IProps) => {
   const {setPreviousConnections} = useContext(SetFormValueContext);

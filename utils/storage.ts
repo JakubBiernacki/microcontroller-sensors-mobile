@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const storeData = async (key: string, value: string) => {
+export const storeDataString = async (key: string, value: string) => {
   try {
     await AsyncStorage.setItem(key, value);
   } catch (e) {
@@ -14,13 +14,13 @@ export const storeDataObject = async (
 ) => {
   try {
     const jsonValue = JSON.stringify(value);
-    await storeData(key, jsonValue);
+    await storeDataString(key, jsonValue);
   } catch (e) {
     console.error(e);
   }
 };
 
-export const getData = async (key: string) => {
+export const getDataStringFromStorage = async (key: string) => {
   try {
     const value = await AsyncStorage.getItem(key);
     if (value !== null) {
@@ -31,15 +31,30 @@ export const getData = async (key: string) => {
   }
 };
 
-export const getDataObject = async (
+export const getDataObjectFromStorage = async (
   key: string,
 ): Promise<Record<any, any> | Array<any> | null> => {
   try {
-    const jsonValue = await getData(key);
+    const jsonValue = await getDataStringFromStorage(key);
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   } catch (e) {
     console.error(e);
     return null;
+  }
+};
+
+export const getDataArrayFromStorage = async (
+  key: string,
+): Promise<Array<any> | []> => {
+  try {
+    const data = await getDataObjectFromStorage(key);
+    if (data instanceof Array) {
+      return data;
+    }
+    return [];
+  } catch (e) {
+    console.error(e);
+    return [];
   }
 };
 

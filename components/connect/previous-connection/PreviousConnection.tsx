@@ -1,10 +1,10 @@
 import {Button, List} from 'react-native-paper';
 import {useContext} from 'react';
-import {SetFormValueContext} from '../context';
-import {IConnectionOption} from '../../../types/connection-option.interface';
+import {SetFormValueContext} from '../Connect';
+import {IConnectionParams} from '../../../types/connection-params.interface';
 
 interface IProps {
-  previousConnection: IConnectionOption;
+  previousConnection: IConnectionParams;
 }
 const PreviousConnection = ({previousConnection}: IProps) => {
   const {setIpAddress, setPort} = useContext(SetFormValueContext);

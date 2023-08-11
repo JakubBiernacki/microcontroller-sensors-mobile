@@ -1,26 +1,26 @@
 import React, {createContext, useState} from 'react';
-import {MicrocontrollerConnection} from './microcontroller/connection/microcontroller-connection';
+import {Microcontroller} from './microcontroller/microcontroller';
 
 export interface IGlobalState {
-  microcontrollerConnection?: MicrocontrollerConnection;
-  setMicrocontrollerConnection?: React.Dispatch<
-    React.SetStateAction<MicrocontrollerConnection | undefined>
+  microcontroller?: Microcontroller;
+  setMicrocontroller?: React.Dispatch<
+    React.SetStateAction<Microcontroller | undefined>
   >;
 }
 
 export const GlobalState = createContext<IGlobalState>({
-  microcontrollerConnection: undefined,
-  setMicrocontrollerConnection: undefined,
+  microcontroller: undefined,
+  setMicrocontroller: undefined,
 });
 
 export const GlobalStateProvider = ({children}: {children?: JSX.Element}) => {
-  const [microcontrollerConnection, setMicrocontrollerConnection] = useState<
-    MicrocontrollerConnection | undefined
+  const [microcontroller, setMicrocontroller] = useState<
+    Microcontroller | undefined
   >(undefined);
 
   const state: IGlobalState = {
-    microcontrollerConnection,
-    setMicrocontrollerConnection,
+    microcontroller,
+    setMicrocontroller,
   };
 
   return <GlobalState.Provider value={state}>{children}</GlobalState.Provider>;

@@ -1,4 +1,4 @@
-export interface IConnectionOption {
+export interface IConnectionParams {
   address: string;
   port: number;
 }

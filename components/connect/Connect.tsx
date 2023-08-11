@@ -1,26 +1,49 @@
-import ConnectionForm from './ConnectionForm';
+import ConnectForm from './ConnectForm';
 import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import {Snackbar, Text} from 'react-native-paper';
-import PreviousConnections from './previous/PreviousConnectionsList';
-import {useEffect, useState} from 'react';
-import {getDataObject, storeDataObject} from '../../utils/storage';
-import {NavigationContext, SetFormValueContext} from './context';
+import PreviousConnections from './previous-connection/PreviousConnectionsList';
+import React, {createContext, useEffect, useState} from 'react';
+import {getDataArrayFromStorage, storeDataObject} from '../../utils/storage';
+
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
-import {IConnectionOption} from '../../types/connection-option.interface';
+import {IConnectionParams} from '../../types/connection-params.interface';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack/lib/typescript/src/types';
 
-type NavigationProps = NativeStackScreenProps<RootStackParamList, 'Connection'>;
+type NavigationProps = NativeStackScreenProps<RootStackParamList, 'Connect'>;
 
-const Connection = ({navigation}: NavigationProps) => {
+interface ISetFormValueContext {
+  setIpAddress: React.Dispatch<React.SetStateAction<string>>;
+  setPort: React.Dispatch<React.SetStateAction<string>>;
+  setPreviousConnections: React.Dispatch<
+    React.SetStateAction<IConnectionParams[]>
+  >;
+}
+
+export const SetFormValueContext = createContext<ISetFormValueContext>({
+  setIpAddress(): void {},
+  setPort(): void {},
+  setPreviousConnections(): void {},
+});
+
+export const NavigationContext =
+  createContext<NativeStackNavigationProp<any> | null>(null);
+
+const Connect = ({navigation}: NavigationProps) => {
   const [ipAddress, setIpAddress] = useState('');
   const [port, setPort] = useState('');
   const [previousConnections, setPreviousConnections] = useState<
-    IConnectionOption[]
+    IConnectionParams[]
   >([]);
+
   const [visiblePopUp, setVisiblePopUp] = useState(false);
   const [popUpMessage, setPopUpMessage] = useState('');
 
-  const formSetValueState = {setIpAddress, setPort, setPreviousConnections};
+  const formSetValueState: ISetFormValueContext = {
+    setIpAddress,
+    setPort,
+    setPreviousConnections,
+  };
 
   const showPopUpMessage = (message: string) => {
     setPopUpMessage(message);
@@ -32,20 +55,14 @@ const Connection = ({navigation}: NavigationProps) => {
   };
 
   useEffect(() => {
-    const fetchConnectionHistory = async () => {
-      const data = await getDataObject('previousConnections');
-      if (data instanceof Array && data.length > 0) {
-        setPreviousConnections(data);
-      }
-    };
-    fetchConnectionHistory();
+    (async () => {
+      const data = await getDataArrayFromStorage('previousConnections');
+      setPreviousConnections(data);
+    })();
   }, []);
 
   useEffect(() => {
-    const saveData = async () => {
-      await storeDataObject('previousConnections', previousConnections);
-    };
-    saveData();
+    storeDataObject('previousConnections', previousConnections);
   }, [previousConnections]);
 
   return (
@@ -58,7 +75,7 @@ const Connection = ({navigation}: NavigationProps) => {
             </View>
 
             <SetFormValueContext.Provider value={formSetValueState}>
-              <ConnectionForm
+              <ConnectForm
                 ipAddress={ipAddress}
                 port={port}
                 showPopUpMessage={showPopUpMessage}
@@ -69,6 +86,7 @@ const Connection = ({navigation}: NavigationProps) => {
           </View>
         </ScrollView>
       </SafeAreaView>
+
       <Snackbar
         visible={visiblePopUp}
         onDismiss={() => {
@@ -96,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Connection;
+export default Connect;
