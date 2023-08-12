@@ -19,12 +19,6 @@ export default class MicrocontrollerDevice
     this.data = deviceData.data
   }
 
-  static isValid(device: Record<any, any>) {
-    return (
-      device.pin && device.type && device.online !== undefined && device.data
-    )
-  }
-
   update(device: IDevice) {
     let updated = false
 
@@ -46,5 +40,11 @@ export default class MicrocontrollerDevice
     }
 
     return updated
+  }
+
+  static isValid(device: Record<any, any>): boolean {
+    return (
+      device.pin && device.type && device.online !== undefined && device.data
+    )
   }
 }

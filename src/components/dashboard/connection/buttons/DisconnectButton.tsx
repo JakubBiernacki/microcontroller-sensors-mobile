@@ -12,7 +12,7 @@ const DisconnectButton = ({navigation}: IProps) => {
   const {microcontroller, setMicrocontroller} = useContext(GlobalState)
 
   const disconnect = () => {
-    microcontroller?.connection._socket?.destroy()
+    microcontroller?.connection.destroy()
     if (setMicrocontroller) {
       setMicrocontroller(undefined)
     }

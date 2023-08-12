@@ -24,8 +24,14 @@ export class Microcontroller extends EventEmitter {
     return this._devices
   }
 
+  async onReady() {
+    return new Promise(resolve => {
+      while (!this.isReady) {}
+      resolve(true)
+    })
+  }
+
   handleData(jsonData: Record<string, any> | Record<string, any>[]) {
-    console.log(jsonData)
     if (!Array.isArray(jsonData)) {
       return
     }
@@ -49,10 +55,12 @@ export class Microcontroller extends EventEmitter {
     }
 
     if (!this.isReady) {
+      console.log('isRady')
       this.isReady = true
       this.emit('ready')
     }
 
+    console.log('micro emit: updated')
     this.emit('updated')
   }
 

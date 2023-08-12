@@ -3,7 +3,7 @@ import {ActivityIndicator, Button} from 'react-native-paper'
 import {useContext, useState} from 'react'
 import {GlobalState} from '../../../../common/GlobalState'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack/src/types'
-import {Microcontroller} from '../../../../server-connection/microcontroller/microcontroller'
+import {connectToMicrocontroller} from '../../../../common/utils/connect-to-microcontroller'
 
 interface IProps {
   navigation: NativeStackNavigationProp<any>
@@ -13,34 +13,31 @@ const ReconnectButton = ({navigation}: IProps) => {
   const {microcontroller, setMicrocontroller} = useContext(GlobalState)
   const [reconnecting, setReconnecting] = useState(false)
 
-  const reconnect = () => {
+  const reconnect = async () => {
     setReconnecting(true)
-    if (
-      !microcontroller ||
-      !microcontroller?.port ||
-      !microcontroller.address
-    ) {
+    microcontroller?.connection.destroy()
+
+    if (!microcontroller || !microcontroller.port || !microcontroller.address) {
       setReconnecting(false)
-      navigation.navigate('Connection')
+      navigation.navigate('Connect')
       return
     }
 
-    const reconnectedMicrocontroller = new Microcontroller(
-      microcontroller.address,
-      microcontroller.port
-    )
-
-    reconnectedMicrocontroller.addListener('connected', () => {
+    try {
+      const reconnectedMicrocontroller = await connectToMicrocontroller(
+        microcontroller.address,
+        microcontroller.port
+      )
       if (setMicrocontroller) {
         setMicrocontroller(reconnectedMicrocontroller)
-        setReconnecting(false)
       }
-    })
-
-    reconnectedMicrocontroller.addListener('timeout', () => {
+    } catch (e) {
+      if (setMicrocontroller) {
+        navigation.navigate('Connect')
+      }
+    } finally {
       setReconnecting(false)
-      navigation.navigate('Connection')
-    })
+    }
   }
 
   return (

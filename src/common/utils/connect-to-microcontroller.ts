@@ -1,4 +1,4 @@
-import {Microcontroller} from '../../../server-connection/microcontroller/microcontroller'
+import {Microcontroller} from '../../server-connection/microcontroller/microcontroller'
 
 export const connectToMicrocontroller = (
   address: string,

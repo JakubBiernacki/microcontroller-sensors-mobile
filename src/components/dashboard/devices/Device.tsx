@@ -1,6 +1,6 @@
-import {IMicrocontrollerDevice} from '../../../server-connection/interface/device.interface'
 import {List} from 'react-native-paper'
 import {Dispatch, SetStateAction, useState} from 'react'
+import MicrocontrollerDevice from '../../../server-connection/microcontroller/microcontroller-device'
 
 const dataTypeToIcon: Record<string, string> = {
   is_pressed: 'led-on',
@@ -11,12 +11,17 @@ const dataTypeToIcon: Record<string, string> = {
 }
 
 interface IProps {
-  device: IMicrocontrollerDevice
+  device: MicrocontrollerDevice
   defaultExpanded: boolean
   setExpandedDevicesPins: Dispatch<SetStateAction<number[]>>
 }
 const Device = ({device, defaultExpanded, setExpandedDevicesPins}: IProps) => {
   const [expanded, setExpanded] = useState(defaultExpanded)
+  const [deviceData, setDeviceData] = useState(device.data)
+
+  device.addListener('updated', () => {
+    setDeviceData(device.data)
+  })
 
   const handlePress = () => {
     if (expanded) {
@@ -29,7 +34,6 @@ const Device = ({device, defaultExpanded, setExpandedDevicesPins}: IProps) => {
 
     setExpanded(!expanded)
   }
-  const dataKeys = Object.keys(device.data)
 
   return (
     <List.Accordion
@@ -44,8 +48,8 @@ const Device = ({device, defaultExpanded, setExpandedDevicesPins}: IProps) => {
           icon="select-inverse"
         />
       )}>
-      {dataKeys.map(key => {
-        let title = device.data[key].toString()
+      {Object.keys(deviceData).map(key => {
+        let title = deviceData[key].toString()
         const icon = dataTypeToIcon[key] || 'alert-circle'
 
         if (key.includes('temperature')) {

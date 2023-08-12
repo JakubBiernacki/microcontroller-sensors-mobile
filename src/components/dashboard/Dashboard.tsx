@@ -4,18 +4,31 @@ import {GlobalState} from '../../common/GlobalState'
 import Home from './Home'
 import Connection from './connection/Connection'
 import DevicesList from './devices/DevicesList'
-import MicrocontrollerDevice from '../../server-connection/microcontroller/microcontroller-device'
 import {RootStackParamList} from '../../App'
 import {NativeStackScreenProps} from '@react-navigation/native-stack'
-
-type NavigationProps = NativeStackScreenProps<RootStackParamList, 'Dashboard'>
+import MicrocontrollerDevice from '../../server-connection/microcontroller/microcontroller-device'
 
 export const MicrocontrollerDevicesContext = createContext<
   MicrocontrollerDevice[]
 >([])
 
+type NavigationProps = NativeStackScreenProps<RootStackParamList, 'Dashboard'>
 const Dashboard = ({navigation}: NavigationProps) => {
-  // const [devices, setDevices] = useState<MicrocontrollerDevice[]>([]);
+  const [devices, setDevices] = useState<MicrocontrollerDevice[]>([])
+
+  const {microcontroller} = useContext(GlobalState)
+
+  if (!microcontroller) {
+    navigation.navigate('Connect')
+  }
+
+  microcontroller?.addListener('ready', () =>
+    setDevices(microcontroller?.devices)
+  )
+  // microcontroller?.addListener('updated', () => {
+  //   setDevices(microcontroller?.devices)
+  // })
+
   const [indexOfSelectedRoute, setIndexOfSelectedRoute] = useState(0)
   const [routes] = useState([
     {
@@ -33,15 +46,6 @@ const Dashboard = ({navigation}: NavigationProps) => {
     {key: 'connection', title: 'Connection', focusedIcon: 'connection'}
   ])
 
-  const {microcontroller} = useContext(GlobalState)
-
-  if (!microcontroller) {
-    navigation.navigate('Connect')
-  }
-  // dashboard.addListener('updated', () => {
-  //   setDevices([...dashboard.devices]);
-  // });
-
   const renderScene = BottomNavigation.SceneMap({
     home: Home,
     connection: () => <Connection navigation={navigation} />,
@@ -49,13 +53,13 @@ const Dashboard = ({navigation}: NavigationProps) => {
   })
 
   return (
-    // <MicrocontrollerDevicesContext.Provider value={devices}>
-    <BottomNavigation
-      navigationState={{index: indexOfSelectedRoute, routes}}
-      onIndexChange={setIndexOfSelectedRoute}
-      renderScene={renderScene}
-    />
-    // </MicrocontrollerDevicesContext.Provider>
+    <MicrocontrollerDevicesContext.Provider value={devices}>
+      <BottomNavigation
+        navigationState={{index: indexOfSelectedRoute, routes}}
+        onIndexChange={setIndexOfSelectedRoute}
+        renderScene={renderScene}
+      />
+    </MicrocontrollerDevicesContext.Provider>
   )
 }
 

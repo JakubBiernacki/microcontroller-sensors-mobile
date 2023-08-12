@@ -11,7 +11,7 @@ import {GlobalState} from '../../../common/GlobalState'
 import {ipAddressValidator} from '../../../common/utils/validators/ip-address.validator'
 import {portValidator} from '../../../common/utils/validators/port.validator'
 import {IConnectionParams} from '../../../common/types/connection-params.interface'
-import {connectToMicrocontroller} from './connect-to-microcontroller'
+import {connectToMicrocontroller} from '../../../common/utils/connect-to-microcontroller'
 
 interface IProps {
   ipAddress: string

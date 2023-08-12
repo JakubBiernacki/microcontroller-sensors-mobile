@@ -1,30 +1,29 @@
-import {useContext, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {View} from 'react-native'
 import {Avatar, Card, IconButton, Text} from 'react-native-paper'
-import {GlobalState} from '../../common/GlobalState'
+import {MicrocontrollerDevicesContext} from './Dashboard'
 
 const Home = () => {
-  const {microcontroller} = useContext(GlobalState)
+  // const {microcontroller} = useContext(GlobalState)
 
+  const devices = useContext(MicrocontrollerDevicesContext)
   const [temp, setTemp] = useState(0)
   const [hum, setHum] = useState(0)
 
-  microcontroller?.addListener('ready', () => {
-    const humDevice = microcontroller?.getDeviceByType('dht11')
-    console.log(humDevice)
-    setHum(humDevice?.data.humidity)
+  useEffect(() => {
+    const humDevice = devices.find(device => device.type === 'dht11')
+    const tempDevice = devices.find(device => device.type === 'ds18x20')
+    setHum(humDevice?.data.humidity || 0)
+    setTemp(tempDevice?.data.temperature || 0)
 
     humDevice?.addListener('updated', () => {
-      setHum(humDevice.data.humidity)
+      setHum(humDevice?.data.humidity)
     })
-
-    const tempDevice = microcontroller?.getDeviceByType('ds18x20')
-    setTemp(tempDevice?.data.temperature)
 
     tempDevice?.addListener('updated', () => {
-      setTemp(tempDevice.data.temperature)
+      setTemp(tempDevice?.data.temperature)
     })
-  })
+  }, [devices])
 
   return (
     <View>
